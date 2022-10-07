@@ -13,6 +13,7 @@ namespace PacMan.Core
         public List<GameObject> objects = new();
         public List<GameObject> toAdd;
         public Player player;
+        public Enemy enemy;
 
         public PauseButton SmallPauseButton;
 
@@ -32,7 +33,9 @@ namespace PacMan.Core
         {
 
             player = new();
+            enemy = new();
             objects.Add(player);
+            objects.Add(enemy);
 
             SmallPauseButton = new(new(0,0));
             SmallPauseButton.Activate();
