@@ -5,8 +5,6 @@ namespace PacMan.Core
 {
     public class GameObject
     {
-        public int HP;
-
         public Vector2 Velocity;
         public Vector2 Position;
         public Texture2D Texture;

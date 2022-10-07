@@ -73,9 +73,10 @@ namespace PacMan
 
             // Loading all needed files
 
-            textures["back"] = Content.Load<Texture2D>("menu");
+            textures["back"] = Content.Load<Texture2D>("back");
             textures["button"] = Content.Load<Texture2D>("placeholder");
             textures["player"] = Content.Load<Texture2D>("placeholder");
+            textures["enemy"] = Content.Load<Texture2D>("placeholder");
             textures["pausebutton"] = Content.Load<Texture2D>("placeholder");
             textures["menubck"] = Content.Load<Texture2D>("menu");
             textures["playbutton"] = Content.Load<Texture2D>("placeholder");
@@ -108,9 +109,12 @@ namespace PacMan
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Gray);
 
             _spriteBatch.Begin();
+
+
+            _spriteBatch.Draw(textures["back"], new Vector2(0,0), Color.White);
 
             if (state.state == State.GameState.Paused) menu.Draw(_spriteBatch);
             else if (state.state == State.GameState.StartMenu) starting.Draw(_spriteBatch);

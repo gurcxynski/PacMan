@@ -5,7 +5,7 @@ namespace PacMan.Core
 {
     public static class Configuration
     {
-        public static Vector2 windowSize = new(500, 750); //size of game window, do not modify
+        public static Vector2 windowSize = new(700, 400); //size of game window, do not modify
 
         // base game stats
 
