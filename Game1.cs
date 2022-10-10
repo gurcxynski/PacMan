@@ -75,14 +75,15 @@ namespace PacMan
 
             textures["back"] = Content.Load<Texture2D>("back");
             textures["button"] = Content.Load<Texture2D>("placeholder");
-            textures["player"] = Content.Load<Texture2D>("placeholder");
+            textures["player"] = Content.Load<Texture2D>("player");
             textures["enemy"] = Content.Load<Texture2D>("placeholder");
             textures["pausebutton"] = Content.Load<Texture2D>("placeholder");
             textures["menubck"] = Content.Load<Texture2D>("menu");
-            textures["playbutton"] = Content.Load<Texture2D>("placeholder");
+            textures["playbutton"] = Content.Load<Texture2D>("newgamebutton");
             textures["menubutton"] = Content.Load<Texture2D>("placeholder");
-            textures["resumebutton"] = Content.Load<Texture2D>("placeholder");
-            textures["exitbutton"] = Content.Load<Texture2D>("placeholder");
+            textures["resumebutton"] = Content.Load<Texture2D>("resumebutton");
+            textures["exitbutton"] = Content.Load<Texture2D>("quitbutton");
+            textures["wall"] = Content.Load<Texture2D>("wall");
 
             // Initializing menus and game scene, loading level 1
 
@@ -102,8 +103,6 @@ namespace PacMan
             if (state.state == State.GameState.Running || state.state == State.GameState.GameLost || state.state == State.GameState.GameWon)
                 activeScene.Update(gameTime);
 
-            System.Diagnostics.Debug.WriteLine(state.state);
-
             base.Update(gameTime);
         }
 
@@ -112,7 +111,6 @@ namespace PacMan
             GraphicsDevice.Clear(Color.Gray);
 
             _spriteBatch.Begin();
-
 
             _spriteBatch.Draw(textures["back"], new Vector2(0,0), Color.White);
 

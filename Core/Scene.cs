@@ -4,6 +4,9 @@ using Microsoft.Xna.Framework.Input;
 using PacMan.Buttons;
 using PacMan.GameObjects;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text.Json;
 using System.Timers;
 
 namespace PacMan.Core
@@ -16,6 +19,8 @@ namespace PacMan.Core
         public Enemy enemy;
 
         public PauseButton SmallPauseButton;
+
+        Rectangles rectangles;
 
         Timer Timer;
 
@@ -33,9 +38,15 @@ namespace PacMan.Core
         {
 
             player = new();
-            enemy = new();
+            //enemy = new();
             objects.Add(player);
-            objects.Add(enemy);
+            //objects.Add(enemy);
+            //objects.Add(new WallRect());
+            
+            var jsonString = File.ReadAllText("rectangles.json");
+            rectangles = JsonSerializer.Deserialize<Rectangles>(jsonString);
+
+            objects.AddRange(rectangles.Convert());
 
             SmallPauseButton = new(new(0,0));
             SmallPauseButton.Activate();
@@ -46,15 +57,10 @@ namespace PacMan.Core
         {
             if (drawScreen) return;
 
-            // updating every object and creating new lasers
 
             toAdd = new();
             objects.ForEach(delegate (GameObject item) { item.Update(UpdateTime); });
             objects.AddRange(toAdd);
-
-            //TODO  fix occasional falling out
-
-            // Removing lasers that hit something or have fallen out and dead enemies
 
             objects.RemoveAll(item => false);
 
@@ -68,20 +74,17 @@ namespace PacMan.Core
 
             switch (button)
             {
-                case Keys.Escape:
-                    Game1.self.state.Pause();
-                    break;
                 case Keys.Left:
-                    player.acceleration = new Vector2(-Configuration.basePlayerVel, player.acceleration.Y);
+                    player.Velocity = new(-150, 0);
                     break;
                 case Keys.Up:
-                    player.acceleration = new Vector2(player.acceleration.X, -Configuration.basePlayerVel);
+                    player.Velocity = new(0, -150);
                     break;
                 case Keys.Down:
-                    player.acceleration = new Vector2(player.acceleration.X, Configuration.basePlayerVel);
+                    player.Velocity = new(0, 150);
                     break;
                 case Keys.Right:
-                    player.acceleration = new Vector2(Configuration.basePlayerVel, player.acceleration.Y);
+                    player.Velocity = new(150, 0);
                     break;
                 default:
                     break;
@@ -95,16 +98,16 @@ namespace PacMan.Core
             switch (button)
             {
                 case Keys.Left:
-                    player.acceleration = new Vector2(0, player.acceleration.Y);
+                    player.Velocity = Vector2.Zero;
                     break;
                 case Keys.Up:
-                    player.acceleration = new Vector2(player.acceleration.X, 0);
+                    player.Velocity = Vector2.Zero;
                     break;
                 case Keys.Down:
-                    player.acceleration = new Vector2(player.acceleration.X, 0);
+                    player.Velocity = Vector2.Zero;
                     break;
                 case Keys.Right:
-                    player.acceleration = new Vector2(0, player.acceleration.Y);
+                    player.Velocity = Vector2.Zero;
                     break;
                 default:
                     break;

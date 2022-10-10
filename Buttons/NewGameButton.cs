@@ -1,11 +1,10 @@
-﻿using PacMan;
-using PacMan.Core;
+﻿using PacMan.Core;
 
 namespace PacMan.Buttons
 {
-    internal class PlayButton : Button
+    internal class NewGameButton : Button
     {
-        public PlayButton(int arg) : base(arg)
+        public NewGameButton(int arg) : base(arg)
         {
             texture = Game1.self.textures["playbutton"];
         }

@@ -39,8 +39,15 @@
         }
         public bool Play()
         {
-            if (state == GameState.StartMenu) Game1.self.starting.Deactivate();
-            if (state == GameState.Paused) Game1.self.menu.Deactivate();
+            Game1.self.starting.Deactivate();
+            Game1.self.activeScene = new();
+            Game1.self.activeScene.Initialize();
+            state = GameState.Running;
+            return false;
+        }
+        public bool Resume()
+        {
+            Game1.self.menu.Deactivate();
             Game1.self.activeScene.SmallPauseButton.Activate();
             state = GameState.Running;
             return false;

@@ -19,16 +19,12 @@ namespace PacMan.GameObjects
 
         public override void Update(GameTime UpdateTime)
         {
-            // create boundary bouncing effect
-
-            if (Position.X < 0 || Position.X + Texture.Width > Configuration.windowSize.X) Velocity *= new Vector2(-1, 1);
-            if (Position.Y < 0 || Position.Y + Texture.Height > Configuration.windowSize.Y) Velocity *= new Vector2(1, -1);
-
-            // adjust movement by dampening to create more realistic movement
-
             base.Update(UpdateTime);
-            Velocity += acceleration;
-            Velocity *= Configuration.dampening;
+
+            if (Position.X < 0) Position = new(0, Position.Y);
+            if (Position.Y < 0) Position = new(Position.X, 0);
+            if (Position.X + Texture.Width > Configuration.windowSize.X) Position = new(Configuration.windowSize.X - Texture.Width, Position.Y);
+            if (Position.Y + Texture.Height > Configuration.windowSize.Y) Position = new(Position.X, Configuration.windowSize.Y - Texture.Height);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

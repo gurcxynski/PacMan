@@ -11,7 +11,7 @@ namespace PacMan.Buttons
 
         protected override void Action()
         {
-            Game1.self.state.Play();
+            Game1.self.state.Resume();
         }
     }
 }
