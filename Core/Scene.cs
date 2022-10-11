@@ -4,10 +4,10 @@ using Microsoft.Xna.Framework.Input;
 using PacMan.Buttons;
 using PacMan.GameObjects;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Timers;
+using Point = PacMan.GameObjects.Point;
 
 namespace PacMan.Core
 {
@@ -17,6 +17,7 @@ namespace PacMan.Core
         public List<GameObject> toAdd;
         public Player player;
         public Enemy enemy;
+        public Grid grid;
 
         public PauseButton SmallPauseButton;
 
@@ -32,24 +33,29 @@ namespace PacMan.Core
         public Scene()
         {
             Game1.keyboard.OnKeyPressed += KeyPressed;
-            Game1.keyboard.OnKeyReleased += KeyReleased;
         }
         public void Initialize()
         {
+            grid = new();
 
             player = new();
             //enemy = new();
             objects.Add(player);
+            
             //objects.Add(enemy);
-            //objects.Add(new WallRect());
             
             var jsonString = File.ReadAllText("rectangles.json");
             rectangles = JsonSerializer.Deserialize<Rectangles>(jsonString);
 
             objects.AddRange(rectangles.Convert());
 
+            grid.Fill();
+
+
             SmallPauseButton = new(new(0,0));
             SmallPauseButton.Activate();
+
+            //Debug.WriteLine(grid.ToString());
 
             //ShowScreen(1000, Game1.self.textures["player"]);
         }
@@ -62,7 +68,8 @@ namespace PacMan.Core
             objects.ForEach(delegate (GameObject item) { item.Update(UpdateTime); });
             objects.AddRange(toAdd);
 
-            objects.RemoveAll(item => false);
+            objects.RemoveAll(item => item.GetType() == typeof(Point) && item.GridPosition == player.GridPosition);
+
 
             Game1.self.state.UpdateStatus();
         }
@@ -75,39 +82,16 @@ namespace PacMan.Core
             switch (button)
             {
                 case Keys.Left:
-                    player.Velocity = new(-150, 0);
+                    player.Queue(Direction.Left);
                     break;
                 case Keys.Up:
-                    player.Velocity = new(0, -150);
+                    player.Queue(Direction.Up);
                     break;
                 case Keys.Down:
-                    player.Velocity = new(0, 150);
+                    player.Queue(Direction.Down);
                     break;
                 case Keys.Right:
-                    player.Velocity = new(150, 0);
-                    break;
-                default:
-                    break;
-            }
-        }
-        void KeyReleased(Keys button)
-        {
-            if (Game1.self.state.state != State.GameState.Running) return;
-
-
-            switch (button)
-            {
-                case Keys.Left:
-                    player.Velocity = Vector2.Zero;
-                    break;
-                case Keys.Up:
-                    player.Velocity = Vector2.Zero;
-                    break;
-                case Keys.Down:
-                    player.Velocity = Vector2.Zero;
-                    break;
-                case Keys.Right:
-                    player.Velocity = Vector2.Zero;
+                    player.Queue(Direction.Right);
                     break;
                 default:
                     break;

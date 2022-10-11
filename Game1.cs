@@ -84,8 +84,7 @@ namespace PacMan
             textures["resumebutton"] = Content.Load<Texture2D>("resumebutton");
             textures["exitbutton"] = Content.Load<Texture2D>("quitbutton");
             textures["wall"] = Content.Load<Texture2D>("wall");
-
-            // Initializing menus and game scene, loading level 1
+            textures["point"] = Content.Load<Texture2D>("circle");
 
             menu.Initialize();
             starting.Initialize();
@@ -108,11 +107,11 @@ namespace PacMan
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Gray);
+            GraphicsDevice.Clear(Color.Black);
 
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(textures["back"], new Vector2(0,0), Color.White);
+            //_spriteBatch.Draw(textures["back"], new Vector2(0,0), Color.White);
 
             if (state.state == State.GameState.Paused) menu.Draw(_spriteBatch);
             else if (state.state == State.GameState.StartMenu) starting.Draw(_spriteBatch);

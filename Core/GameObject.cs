@@ -7,6 +7,7 @@ namespace PacMan.Core
     {
         public Vector2 Velocity;
         public Vector2 Position;
+        public Vector2 GridPosition;
         public Texture2D Texture;
         public virtual void Draw(SpriteBatch spriteBatch) => spriteBatch.Draw(Texture, Position, Color.White);
 
