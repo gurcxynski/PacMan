@@ -50,11 +50,12 @@ namespace PacMan.GameObjects
         bool TryTurn()
         {
             var cell = Configuration.cellSize;
+            var grid = Game1.self.activeScene.grid;
             Vector2 relativePos = new(Position.X % cell, Position.Y % cell);
             switch (queuedTurn)
             {
                 case Direction.Left:
-                    if (relativePos.Y < 5)
+                    if (relativePos.Y < 5 && grid.CanMoveInto(GridPosition + new Vector2(-1,0)))
                     {
                         dir = Direction.Left;
                         Velocity = new(-150, 0);
@@ -63,7 +64,7 @@ namespace PacMan.GameObjects
                     }
                     break;
                 case Direction.Right:
-                    if (relativePos.Y < 5)
+                    if (relativePos.Y < 5 && grid.CanMoveInto(GridPosition + new Vector2(1, 0)))
                     {
                         dir = Direction.Right;
                         Velocity = new(150, 0);
@@ -72,7 +73,7 @@ namespace PacMan.GameObjects
                     }
                     break;
                 case Direction.Down:
-                    if (relativePos.X < 5)
+                    if (relativePos.X < 5 && grid.CanMoveInto(GridPosition + new Vector2(0, 1)))
                     {
                         dir = Direction.Down;
                         Velocity = new(0, 150);
@@ -81,7 +82,7 @@ namespace PacMan.GameObjects
                     }
                     break;
                 case Direction.Up:
-                    if (relativePos.X < 5)
+                    if (relativePos.X < 5 && grid.CanMoveInto(GridPosition + new Vector2(0, -1)))
                     {
                         dir = Direction.Up;
                         Velocity = new(0, -150);

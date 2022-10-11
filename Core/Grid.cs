@@ -1,6 +1,5 @@
-﻿using PacMan.GameObjects;
-using System.Collections.Generic;
-using static System.Net.Mime.MediaTypeNames;
+﻿using Microsoft.Xna.Framework;
+using Point = PacMan.GameObjects.Point;
 
 namespace PacMan.Core
 {
@@ -61,6 +60,10 @@ namespace PacMan.Core
                     }
                 }
             }
+        }
+        public bool CanMoveInto(Vector2 arg)
+        {
+            return grid[(int)arg.X, (int)arg.Y] != FieldType.Wall;
         }
     }
 }
