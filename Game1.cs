@@ -78,7 +78,7 @@ namespace PacMan
             textures["back"] = Content.Load<Texture2D>("back");
             textures["button"] = Content.Load<Texture2D>("placeholder");
             textures["player"] = Content.Load<Texture2D>("player");
-            textures["enemy"] = Content.Load<Texture2D>("placeholder");
+            textures["enemy"] = Content.Load<Texture2D>("enemy");
             textures["pausebutton"] = Content.Load<Texture2D>("placeholder");
             textures["menubck"] = Content.Load<Texture2D>("menu");
             textures["playbutton"] = Content.Load<Texture2D>("newgamebutton");

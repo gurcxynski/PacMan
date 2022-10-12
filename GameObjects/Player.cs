@@ -33,11 +33,12 @@ namespace PacMan.GameObjects
         {
             float passed = (float)UpdateTime.ElapsedGameTime.TotalSeconds;
             var newPos = Position + Velocity * passed;
+            var newGrid = newPos / Configuration.cellSize;
 
-            if (Game1.self.activeScene.grid.CanMoveInto(newPos / Configuration.cellSize))
+            if (Game1.self.activeScene.grid.IsWall(newGrid))
             {
-                if ((dir == Direction.Right && !Game1.self.activeScene.grid.CanMoveInto(newPos / Configuration.cellSize + new Vector2(1, 0)))
-                    || (dir == Direction.Down && !Game1.self.activeScene.grid.CanMoveInto(newPos / Configuration.cellSize + new Vector2(0, 1))))
+                if ((dir == Direction.Right && !Game1.self.activeScene.grid.IsWall(newGrid + new Vector2(1, 0)))
+                    || (dir == Direction.Down && !Game1.self.activeScene.grid.IsWall(newGrid + new Vector2(0, 1))))
                 {
                     Velocity = Vector2.Zero;
                     Position = Configuration.cellSize * (GridPosition + (dir == Direction.Right ? new Vector2(1,0) : new Vector2(0,1)));
@@ -74,7 +75,7 @@ namespace PacMan.GameObjects
             switch (queuedTurn)
             {
                 case Direction.Left:
-                    if (relativePos.Y < 5 && grid.CanMoveInto(GridPosition + new Vector2(-1,0)))
+                    if (relativePos.Y < 5 && grid.IsWall(GridPosition + new Vector2(-1,0)))
                     {
                         dir = Direction.Left;
                         Velocity = new(-150, 0);
@@ -83,7 +84,7 @@ namespace PacMan.GameObjects
                     }
                     break;
                 case Direction.Right:
-                    if (relativePos.Y < 5 && grid.CanMoveInto(GridPosition + new Vector2(1, 0)))
+                    if (relativePos.Y < 5 && grid.IsWall(GridPosition + new Vector2(1, 0)))
                     {
                         dir = Direction.Right;
                         Velocity = new(150, 0);
@@ -92,7 +93,7 @@ namespace PacMan.GameObjects
                     }
                     break;
                 case Direction.Down:
-                    if (relativePos.X < 5 && grid.CanMoveInto(GridPosition + new Vector2(0, 1)))
+                    if (relativePos.X < 5 && grid.IsWall(GridPosition + new Vector2(0, 1)))
                     {
                         dir = Direction.Down;
                         Velocity = new(0, 150);
@@ -101,7 +102,7 @@ namespace PacMan.GameObjects
                     }
                     break;
                 case Direction.Up:
-                    if (relativePos.X < 5 && grid.CanMoveInto(GridPosition + new Vector2(0, -1)))
+                    if (relativePos.X < 5 && grid.IsWall(GridPosition + new Vector2(0, -1)))
                     {
                         dir = Direction.Up;
                         Velocity = new(0, -150);

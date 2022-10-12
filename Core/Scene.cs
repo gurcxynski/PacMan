@@ -40,10 +40,8 @@ namespace PacMan.Core
             grid = new();
 
             player = new();
-            //enemy = new();
-            objects.Add(player);
-            
-            //objects.Add(enemy);
+            enemy = new(new(12, 12));
+
             
             var jsonString = File.ReadAllText("rectangles.json");
             rectangles = JsonSerializer.Deserialize<Rectangles>(jsonString);
@@ -51,12 +49,13 @@ namespace PacMan.Core
             objects.AddRange(rectangles.Convert());
 
             grid.Fill();
-
+            objects.Add(player);
+            objects.Add(enemy);
 
             SmallPauseButton = new(new(0,0));
             SmallPauseButton.Activate();
 
-            //ShowScreen(1000, Game1.self.textures["player"]);
+            TextPopUp(1000, "START");
         }
         public void Update(GameTime UpdateTime)
         {
@@ -78,10 +77,9 @@ namespace PacMan.Core
                 }
             }
 
-
             objects.RemoveAll(item => toRemove.Contains(item));
 
-            if (score > 130 || objects.FindAll(item => item.GetType() == typeof(Point)).Count == 0)
+            if (objects.FindAll(item => item.GetType() == typeof(Point)).Count == 0)
             {
                 Game1.self.state.GameWon();
             }
@@ -122,19 +120,19 @@ namespace PacMan.Core
 
             spriteBatch.DrawString(Game1.self.font, $"SCORE: {score}\nHIGH SCORE: {Game1.self.high}", new(0, Configuration.windowSize.Y), Color.White);
 
-            if (drawScreen) spriteBatch.DrawString(Game1.self.font, TextToDraw, new Vector2(0,0), Color.White);
+            if (drawScreen) spriteBatch.DrawString(Game1.self.font, TextToDraw, (Configuration.windowSize - Game1.self.font.MeasureString(TextToDraw)) / 2, Color.White); 
         }
 
         // show texture for given amount of milliseconds
 
-        public void ShowScreen(int time, string text)
+        public void TextPopUp(int time, string text)
         {
             drawScreen = true;
             TextToDraw = text;
             Timer = new(time) { Enabled = true };
-            Timer.Elapsed += HideScreen;
+            Timer.Elapsed += HideText;
         }
-        void HideScreen(object source, ElapsedEventArgs e)
+        void HideText(object source, ElapsedEventArgs e)
         {
             Timer.Dispose();
             drawScreen = false;

@@ -25,7 +25,7 @@
         public bool GameWon()
         {
             if (state != GameState.Running) return false;
-            Game1.self.activeScene.ShowScreen(2000, "YOU WIN");
+            Game1.self.activeScene.TextPopUp(2000, "YOU WIN");
             state = GameState.GameWon;
             return false;
         }

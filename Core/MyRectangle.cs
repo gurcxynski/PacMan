@@ -11,7 +11,7 @@ namespace PacMan.Core
         [JsonInclude] public int Height;
         public Rectangle ToRect()
         {
-            return new(Configuration.cellSize * X, Configuration.cellSize * Y, Configuration.cellSize * Width, Configuration.cellSize * Height);
+            return new(Configuration.cellSize * X + 5, Configuration.cellSize * Y + 5, Configuration.cellSize * Width - 10, Configuration.cellSize * Height - 10);
         }
     }
 }

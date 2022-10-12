@@ -61,9 +61,10 @@ namespace PacMan.Core
                 }
             }
         }
-        public bool CanMoveInto(Vector2 arg)
+        public bool IsWall(Vector2 arg)
         {
             arg = new(arg.X % Configuration.cells, arg.Y % Configuration.cells);
+            if (arg.X < 0 || arg.Y < 0) return false;
             return grid[(int)arg.X, (int)arg.Y] != FieldType.Wall;
         }
     }
