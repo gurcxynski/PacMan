@@ -1,1 +1,82 @@
-C:/Users/wojci/source/repos/PacMan/bin/Debug/net6.0-windows/rectangles.json
+{
+  "rectangles": [
+    {
+      "X": 0,
+      "Y": 0,
+      "Width": 27,
+      "Height": 1
+    },
+    {
+      "X": 0,
+      "Y": 0,
+      "Width": 1,
+      "Height": 8
+    },
+    {
+      "X": 0,
+      "Y": 10,
+      "Width": 1,
+      "Height": 6
+    },
+    {
+      "X": 0,
+      "Y": 18,
+      "Width": 1,
+      "Height": 8
+    },
+    {
+      "X": 26,
+      "Y": 0,
+      "Width": 1,
+      "Height": 8
+    },
+    {
+      "X": 26,
+      "Y": 10,
+      "Width": 1,
+      "Height": 6
+    },
+    {
+      "X": 26,
+      "Y": 18,
+      "Width": 1,
+      "Height": 8
+    },
+    {
+      "X": 0,
+      "Y": 26,
+      "Width": 27,
+      "Height": 1
+    },
+    {
+      "X": 2,
+      "Y": 2,
+      "Width": 2,
+      "Height": 1
+    },
+    {
+      "X": 2,
+      "Y": 4,
+      "Width": 2,
+      "Height": 1
+    },
+    {
+      "X": 2,
+      "Y": 4,
+      "Width": 1,
+      "Height": 3
+    },
+    {
+      "X": 4,
+      "Y": 6,
+      "Width": 4,
+      "Height": 1
+    },
+    {
+      "X": 1,
+      "Y": 10,
+      "Width": 5,
+      "Height": 1
+    }
+
+  ]}
