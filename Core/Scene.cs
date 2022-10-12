@@ -14,10 +14,11 @@ namespace PacMan.Core
     public class Scene
     {
         public List<GameObject> objects = new();
-        public List<GameObject> toAdd;
+
         public Player player;
         public Enemy enemy;
         public Grid grid;
+        public int score = 0;
 
         public PauseButton SmallPauseButton;
 
@@ -28,7 +29,7 @@ namespace PacMan.Core
         // used when drawing communicates
 
         public bool drawScreen = false;
-        Texture2D ScreenToDraw;
+        string TextToDraw;
 
         public Scene()
         {
@@ -55,21 +56,35 @@ namespace PacMan.Core
             SmallPauseButton = new(new(0,0));
             SmallPauseButton.Activate();
 
-            //Debug.WriteLine(grid.ToString());
-
             //ShowScreen(1000, Game1.self.textures["player"]);
         }
         public void Update(GameTime UpdateTime)
         {
-            if (drawScreen) return;
 
+            List<GameObject> toAdd = new();
+            List<GameObject> toRemove = new();
 
-            toAdd = new();
+            if (drawScreen) return; 
+
             objects.ForEach(delegate (GameObject item) { item.Update(UpdateTime); });
             objects.AddRange(toAdd);
 
-            objects.RemoveAll(item => item.GetType() == typeof(Point) && item.GridPosition == player.GridPosition);
+            foreach (var item in objects)
+            {
+                if (item.GetType() == typeof(Point) && item.GridPosition == player.GridPosition)
+                {
+                    score += 20;
+                    toRemove.Add(item);
+                }
+            }
 
+
+            objects.RemoveAll(item => toRemove.Contains(item));
+
+            if (score > 130 || objects.FindAll(item => item.GetType() == typeof(Point)).Count == 0)
+            {
+                Game1.self.state.GameWon();
+            }
 
             Game1.self.state.UpdateStatus();
         }
@@ -77,7 +92,6 @@ namespace PacMan.Core
         void KeyPressed(Keys button)
         {
             if (Game1.self.state.state != State.GameState.Running) return;
-
 
             switch (button)
             {
@@ -106,21 +120,23 @@ namespace PacMan.Core
 
             SmallPauseButton.Draw(spriteBatch);
 
-            if (drawScreen) spriteBatch.Draw(ScreenToDraw, new Vector2((Configuration.windowSize.X - ScreenToDraw.Width) / 2, (Configuration.windowSize.Y - ScreenToDraw.Height) / 2), Color.White);
+            spriteBatch.DrawString(Game1.self.font, $"SCORE: {score}\nHIGH SCORE: {Game1.self.high}", new(0, Configuration.windowSize.Y), Color.White);
+
+            if (drawScreen) spriteBatch.DrawString(Game1.self.font, TextToDraw, new Vector2(0,0), Color.White);
         }
 
         // show texture for given amount of milliseconds
 
-        public void ShowScreen(int time, Texture2D texture)
+        public void ShowScreen(int time, string text)
         {
             drawScreen = true;
-            ScreenToDraw = texture;
+            TextToDraw = text;
             Timer = new(time) { Enabled = true };
             Timer.Elapsed += HideScreen;
         }
         void HideScreen(object source, ElapsedEventArgs e)
         {
-            Timer.Elapsed -= HideScreen;
+            Timer.Dispose();
             drawScreen = false;
         }
     }

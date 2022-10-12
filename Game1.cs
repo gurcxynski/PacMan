@@ -35,7 +35,9 @@ namespace PacMan
         // Texture list
 
         public Dictionary<string, Texture2D> textures = new();
+        public SpriteFont font;
 
+        public int high = 0;
 
         public Game1()
         {
@@ -47,7 +49,7 @@ namespace PacMan
 
             Window.Title = "Pac-Man";
             _graphics.PreferredBackBufferWidth = (int)Configuration.windowSize.X;
-            _graphics.PreferredBackBufferHeight = (int)Configuration.windowSize.Y;
+            _graphics.PreferredBackBufferHeight = (int)Configuration.windowSize.Y + 50;
 
             _graphics.ApplyChanges();
         }
@@ -85,6 +87,9 @@ namespace PacMan
             textures["exitbutton"] = Content.Load<Texture2D>("quitbutton");
             textures["wall"] = Content.Load<Texture2D>("wall");
             textures["point"] = Content.Load<Texture2D>("circle");
+            
+
+            font = Content.Load<SpriteFont>("font");
 
             menu.Initialize();
             starting.Initialize();

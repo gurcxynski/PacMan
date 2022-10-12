@@ -13,12 +13,12 @@ namespace PacMan.Core
             Enemy,
             Empty
         }
-        FieldType[,] grid = new FieldType[26, 26];
+        FieldType[,] grid = new FieldType[Configuration.cells, Configuration.cells];
         public Grid()
         {
-            for (int i = 0; i < 26; i++)
+            for (int i = 0; i < Configuration.cells; i++)
             {
-                for (int j = 0; j < 26; j++)
+                for (int j = 0; j < Configuration.cells; j++)
                 {
                     grid[i,j] = FieldType.Empty;
                 }
@@ -37,9 +37,9 @@ namespace PacMan.Core
         public override string ToString()
         {
             string text = "";
-            for (int i = 0; i < 26; i++)
+            for (int i = 0; i < Configuration.cells; i++)
             {
-                for (int j = 0; j < 26; j++)
+                for (int j = 0; j < Configuration.cells; j++)
                 {
                     text += $" {grid[j,i]}";
                 }
@@ -49,9 +49,9 @@ namespace PacMan.Core
         }
         public void Fill()
         {
-            for (int i = 0; i < 26; i++)
+            for (int i = 1; i < Configuration.cells - 1; i++)
             {
-                for (int j = 0; j < 26; j++)
+                for (int j = 1; j < Configuration.cells - 1; j++)
                 {
                     if (grid[i, j] == FieldType.Empty)
                     {
@@ -63,6 +63,7 @@ namespace PacMan.Core
         }
         public bool CanMoveInto(Vector2 arg)
         {
+            arg = new(arg.X % Configuration.cells, arg.Y % Configuration.cells);
             return grid[(int)arg.X, (int)arg.Y] != FieldType.Wall;
         }
     }

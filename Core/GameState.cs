@@ -13,7 +13,10 @@
         public GameState state;
         public void UpdateStatus()
         {
-            
+            if (state == GameState.GameWon && !Game1.self.activeScene.drawScreen)
+            {
+                ToStartMenu();
+            }
         }
         public bool GameOver()
         {
@@ -21,6 +24,9 @@
         }
         public bool GameWon()
         {
+            if (state != GameState.Running) return false;
+            Game1.self.activeScene.ShowScreen(2000, "YOU WIN");
+            state = GameState.GameWon;
             return false;
         }
         public bool Pause()
@@ -32,6 +38,7 @@
         }
         public bool ToStartMenu()
         {
+            if (Game1.self.activeScene.score > Game1.self.high) Game1.self.high = Game1.self.activeScene.score;
             state = GameState.StartMenu;
             Game1.self.activeScene.SmallPauseButton.Deactivate();
             Game1.self.starting.Activate();

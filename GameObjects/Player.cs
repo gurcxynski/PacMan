@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PacMan.Core;
-using System.Diagnostics;
 
 namespace PacMan.GameObjects
 {
@@ -14,13 +13,14 @@ namespace PacMan.GameObjects
     }
     public class Player : GameObject
     {
-        Direction dir;
+        Direction? dir;
         Direction? queuedTurn;
+        public Vector2 Velocity;
         public Player()
         {
             Texture = Game1.self.textures["player"];
 
-            GridPosition = new(12, 12);
+            GridPosition = new(Configuration.cells / 2, Configuration.cells - 8);
             Position = Configuration.cellSize * GridPosition;
 
             Velocity = new(-150, 0);
@@ -31,21 +31,40 @@ namespace PacMan.GameObjects
 
         public override void Update(GameTime UpdateTime)
         {
-            base.Update(UpdateTime);
+            float passed = (float)UpdateTime.ElapsedGameTime.TotalSeconds;
+            var newPos = Position + Velocity * passed;
 
-            if (Position.X < 0) Position = new(0, Position.Y);
-            if (Position.Y < 0) Position = new(Position.X, 0);
-            if (Position.X + Texture.Width > Configuration.windowSize.X) Position = new(Configuration.windowSize.X - Texture.Width, Position.Y);
-            if (Position.Y + Texture.Height > Configuration.windowSize.Y) Position = new(Position.X, Configuration.windowSize.Y - Texture.Height);
+            if (Game1.self.activeScene.grid.CanMoveInto(newPos / Configuration.cellSize))
+            {
+                if ((dir == Direction.Right && !Game1.self.activeScene.grid.CanMoveInto(newPos / Configuration.cellSize + new Vector2(1, 0)))
+                    || (dir == Direction.Down && !Game1.self.activeScene.grid.CanMoveInto(newPos / Configuration.cellSize + new Vector2(0, 1))))
+                {
+                    Velocity = Vector2.Zero;
+                    Position = Configuration.cellSize * (GridPosition + (dir == Direction.Right ? new Vector2(1,0) : new Vector2(0,1)));
+                    dir = null;
+                }
+                else Position = newPos;
+            }
+            else
+            {
+                Velocity = Vector2.Zero;
+                dir = null;
+            }
+
+            if (Position.X < 0) Position = new(Configuration.windowSize.X - Texture.Width, Position.Y);
+            if (Position.Y < 0) Position = new(Position.X, Configuration.windowSize.Y - Texture.Height);
+            if (Position.X + Texture.Width > Configuration.windowSize.X) Position = new(0, Position.Y);
+            if (Position.Y + Texture.Height > Configuration.windowSize.Y) Position = new(Position.X, 0);
 
             GridPosition = new((int)(Position.X / Configuration.cellSize), (int)(Position.Y / Configuration.cellSize));
 
             TryTurn();
+           
         }
         public void Queue(Direction arg)
         {
             if (arg == dir) return;
-            queuedTurn ??= arg;
+            queuedTurn = arg;
         }
         bool TryTurn()
         {

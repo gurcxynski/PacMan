@@ -5,7 +5,6 @@ namespace PacMan.Core
 {
     public class GameObject
     {
-        public Vector2 Velocity;
         public Vector2 Position;
         public Vector2 GridPosition;
         public Texture2D Texture;
@@ -13,14 +12,7 @@ namespace PacMan.Core
 
         public virtual void Update(GameTime UpdateTime)
         {
-            float passed = (float)UpdateTime.ElapsedGameTime.TotalSeconds;
-            var newPos = Position + Velocity * passed;
-            if (Game1.self.activeScene.grid.CanMoveInto(newPos / Configuration.cellSize))
-            {
-                Position = newPos;
-            }
-            else Velocity = Vector2.Zero;
-            // TODO FIX MOVING INTO A LOWER WALL
+
         }
     }
 }
