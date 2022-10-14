@@ -13,7 +13,7 @@ namespace PacMan.Core
         protected Button(int level)
         {
             texture = Game1.self.textures["button"];
-            position = new Vector2((Configuration.windowSize.X - texture.Width) / 2, 120 + level * Configuration.windowSize.Y / 5.5f);
+            position = new Vector2((Configuration.windowSize.X - texture.Width) / 2, (level * 100) + Configuration.windowSize.Y / 2 - 150);
         }
         protected Button(Vector2 pos)
         {
@@ -22,7 +22,8 @@ namespace PacMan.Core
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position, EnteredButton() ? new Color(0x88FFFFFF) : Color.White);
+            spriteBatch.Draw(Game1.self.textures["wall"], new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height), EnteredButton() ? new Color(0x11CC0000) : Color.Blue);
+            spriteBatch.Draw(texture, position, Color.White);
         }
         protected bool EnteredButton()
         {

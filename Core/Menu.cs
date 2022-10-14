@@ -23,7 +23,7 @@ namespace PacMan.Core
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(back, Position, Color.White);
+            //spriteBatch.Draw(back, Position, Color.White);
             buttons.ForEach(delegate (Button btn) { btn.Draw(spriteBatch); });
         }
         public void Activate()

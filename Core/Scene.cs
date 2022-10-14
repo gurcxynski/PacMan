@@ -2,7 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using PacMan.Buttons;
+using PacMan.Enemies;
 using PacMan.GameObjects;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -16,7 +18,14 @@ namespace PacMan.Core
         public List<GameObject> objects = new();
 
         public Player player;
-        public Enemy enemy;
+
+        public Blinky blinky;
+        public Pinky pinky;
+        public Inky inky;
+        public Clyde clyde;
+
+        public List<Enemy> jail;
+
         public Grid grid;
         public int score = 0;
 
@@ -40,19 +49,40 @@ namespace PacMan.Core
             grid = new();
 
             player = new();
-            enemy = new(new(12, 12));
 
-            
+
             var jsonString = File.ReadAllText("rectangles.json");
             rectangles = JsonSerializer.Deserialize<Rectangles>(jsonString);
 
             objects.AddRange(rectangles.Convert());
 
             grid.Fill();
-            objects.Add(player);
-            objects.Add(enemy);
 
-            SmallPauseButton = new(new(0,0));
+            blinky = new();
+            pinky = new();
+            inky = new();
+            clyde = new();
+
+            jail = new()
+            {
+                pinky,
+                inky,
+                clyde
+            };
+
+            objects.Add(player);
+
+            objects.Add(blinky);
+            objects.Add(pinky);
+            objects.Add(inky);
+            objects.Add(clyde);
+
+            objects.Add(new Circle(5, 4));
+            objects.Add(new Circle(22, 4));
+            objects.Add(new Circle(5, 26));
+            objects.Add(new Circle(22, 26));
+
+            SmallPauseButton = new(new(Configuration.windowSize.X - 30, 0));
             SmallPauseButton.Activate();
 
             TextPopUp(1000, "START");
@@ -62,18 +92,42 @@ namespace PacMan.Core
 
             List<GameObject> toAdd = new();
             List<GameObject> toRemove = new();
-
             if (drawScreen) return; 
+
+            if(player is null)
+            {
+                player = new();
+                objects.Add(player);
+            }
 
             objects.ForEach(delegate (GameObject item) { item.Update(UpdateTime); });
             objects.AddRange(toAdd);
 
             foreach (var item in objects)
             {
-                if (item.GetType() == typeof(Point) && item.GridPosition == player.GridPosition)
+                if (item.GetType() == typeof(Point) && player is not null && item.GridPosition == player.GridPosition)
                 {
                     score += 20;
                     toRemove.Add(item);
+                }
+                if (item.GetType() == typeof(Circle) && player is not null && item.GridPosition == player.GridPosition)
+                {
+                    Game1.self.state.EatenCircle(UpdateTime);
+                    toRemove.Add(item);
+                }
+                if (item.GetType().IsSubclassOf(typeof(Enemy)) && player is not null && item.GridPosition == player.GridPosition)
+                {
+                    if (((Enemy)item).phase == Phase.Frightened)
+                    {
+                        Game1.self.state.EatenScared((Enemy)item, UpdateTime);
+                        score += 200;
+                    }
+                    else
+                    {
+                        Game1.self.state.RemoveLive();
+                        toRemove.Add(player);
+                        player = null;
+                    }
                 }
             }
 
@@ -90,7 +144,7 @@ namespace PacMan.Core
         void KeyPressed(Keys button)
         {
             if (Game1.self.state.state != State.GameState.Running) return;
-
+            if (player is null) return;
             switch (button)
             {
                 case Keys.Left:
@@ -109,7 +163,6 @@ namespace PacMan.Core
                     break;
             }
         }
-
         // drawing everything
 
         public void Draw(SpriteBatch spriteBatch)
@@ -118,9 +171,13 @@ namespace PacMan.Core
 
             SmallPauseButton.Draw(spriteBatch);
 
-            spriteBatch.DrawString(Game1.self.font, $"SCORE: {score}\nHIGH SCORE: {Game1.self.high}", new(0, Configuration.windowSize.Y), Color.White);
+            spriteBatch.DrawString(Game1.self.font, $"SCORE: {score}\nHIGH SCORE: {Game1.self.high}", new(0, 0), Color.White);
 
-            if (drawScreen) spriteBatch.DrawString(Game1.self.font, TextToDraw, (Configuration.windowSize - Game1.self.font.MeasureString(TextToDraw)) / 2, Color.White); 
+            for (int i = 0; i < Game1.self.state.lives; i++) {
+                spriteBatch.Draw(Game1.self.textures["life"], new Vector2(Configuration.windowSize.X - 100 + i * 20, 10), Color.White); 
+            }
+
+            if (drawScreen) spriteBatch.DrawString(Game1.self.font, TextToDraw, (Configuration.windowSize - Game1.self.font.MeasureString(TextToDraw)) / 2 + new Vector2(0, 70), Color.White); 
         }
 
         // show texture for given amount of milliseconds

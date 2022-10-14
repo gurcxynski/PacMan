@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using SharpDX.Direct3D9;
 using System.Text.Json.Serialization;
 
 namespace PacMan.Core
@@ -9,9 +10,19 @@ namespace PacMan.Core
         [JsonInclude] public int Y;
         [JsonInclude] public int Width;
         [JsonInclude] public int Height;
+        readonly int cell = Configuration.cellSize;
         public Rectangle ToRect()
         {
-            return new(Configuration.cellSize * X + 5, Configuration.cellSize * Y + 5, Configuration.cellSize * Width - 10, Configuration.cellSize * Height - 10);
+            return new(cell * X, cell * Y, cell * Width, cell * Height);
+        }
+
+        public Rectangle ReverseRect()
+        {
+            return new(
+                (int)Configuration.windowSize.X - cell * X - cell * Width, 
+                cell * Y,
+                cell * Width,
+                cell * Height);
         }
     }
 }

@@ -1,65 +1,206 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using PacMan.Core;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Timers;
 
 namespace PacMan.GameObjects
 {
-    public class Enemy : GameObject
+    public enum Leaving
     {
-        Direction? dir;
-        public Vector2 Velocity;
-        Vector2 toStop = new(-1, -1);
-        public Enemy(Vector2 arg)
+        stay,
+        phase1,
+        phase2,
+        left
+    }
+    public enum Phase
+    {
+        Scatter,
+        Chase,
+        Frightened
+    }
+    public abstract class Enemy : GameObject
+    {
+        protected Vector2 Velocity;
+        protected Timer timer;
+        protected Vector2 target;
+        protected Vector2 prevTile;
+        protected Vector2 nextTile;
+        protected double? lastTurn;
+        public Phase phase = Phase.Scatter;
+        public Leaving state = Leaving.stay;
+        public Texture2D orgTexture;
+
+        protected Enemy()
         {
-            Texture = Game1.self.textures["enemy"];
-            GridPosition = arg;
-            Position = Configuration.cellSize * GridPosition;
-            SetNewVel();
+            timer = new(7000)
+            {
+                Enabled = true
+            };
+            timer.Elapsed += ChangePhase;
         }
         public override void Update(GameTime UpdateTime)
         {
-            float passed = (float)UpdateTime.ElapsedGameTime.TotalSeconds;
+            if (state == Leaving.stay) return;
+            lastTurn ??= UpdateTime.TotalGameTime.TotalSeconds;
 
-            var newPos = Position + Velocity * passed;
-            var newGrid = newPos / Configuration.cellSize;
-
-            if (dir == Direction.Right) newGrid += new Vector2(1, 0);
-            if (dir == Direction.Down) newGrid += new Vector2(0, 1);
-
-            if (Game1.self.activeScene.grid.IsWall(newGrid))
+            if (state == Leaving.phase1 || state == Leaving.phase2)
             {
-                Position = newPos;
+                if (state == Leaving.phase1)
+                {
+                    if (MoveTo(new Vector2(13, 12), UpdateTime)) state = Leaving.phase2;
+
+                }
+                else if (MoveTo(new Vector2(13, 10), UpdateTime)) state = Leaving.left;
+                return;
             }
-            else SetNewVel();
 
-            if (Position.X < 0) Position = new(Configuration.windowSize.X - Texture.Width, Position.Y);
-            if (Position.Y < 0) Position = new(Position.X, Configuration.windowSize.Y - Texture.Height);
-            if (Position.X + Texture.Width > Configuration.windowSize.X) Position = new(0, Position.Y);
-            if (Position.Y + Texture.Height > Configuration.windowSize.Y) Position = new(Position.X, 0);
+
+            MoveTo(nextTile, UpdateTime);
+
         }
-        void SetNewVel()
+        protected static float Lerp(float firstFloat, float secondFloat, float by)
         {
-            Random rnd = new();
-            var last = dir;
-            while(last == dir) dir = (Direction?)rnd.Next(0, 4);
-            switch (dir)
+            return firstFloat * (1 - by) + secondFloat * by;
+        }
+        protected static Vector2 VectorLerp(Vector2 firstVector, Vector2 secondVector, float by)
+        {
+            float retX = Lerp(firstVector.X, secondVector.X, by);
+            float retY = Lerp(firstVector.Y, secondVector.Y, by);
+            return new Vector2(retX, retY);
+        }
+        public void Leave(GameTime updateTime)
+        {
+            state = Leaving.phase1;
+            lastTurn = updateTime.TotalGameTime.TotalSeconds;
+            Game1.self.activeScene.jail.Remove(this);
+        }
+        protected bool MoveTo(Vector2 to, GameTime updateTime)
+        {
+            var progress = updateTime.TotalGameTime.TotalSeconds - lastTurn;
+            var relative = to - GridPosition;
+            
+            if(progress * Configuration.baseEnemyVel > Configuration.cellSize)
             {
-                case Direction.Left:
-                    Velocity = new(-150, 0);
+                prevTile = GridPosition;
+                GridPosition = to;
+                Position = Configuration.cellSize * GridPosition;
+                QueueTurn(GridPosition);
+                lastTurn = updateTime.TotalGameTime.TotalSeconds;
+                ChangeTexture();
+                return true;
+            }
+            else
+            {
+                Position = (float)progress * Configuration.baseEnemyVel * relative + GridPosition * Configuration.cellSize;
+            }
+            if (Position == Vector2.Zero) Debug.WriteLine(progress + " " + GridPosition);
+            return false;
+        }
+
+        protected void ChangeTexture()
+        {
+            if (phase == Phase.Frightened) return;
+            var relative = nextTile - GridPosition;
+            switch (relative)
+            {
+                case Vector2(1, 0):
+                    Texture = Game1.self.textures[orgTexture.Name[0] + "r"];
                     break;
-                case Direction.Right:
-                    Velocity = new(150, 0);
+                case Vector2(-1, 0):
+                    Texture = Game1.self.textures[orgTexture.Name[0] + "l"];
                     break;
-                case Direction.Down:
-                    Velocity = new(0, 150);
+                case Vector2(0, -1):
+                    Texture = Game1.self.textures[orgTexture.Name[0] + "u"];
                     break;
-                case Direction.Up:
-                    Velocity = new(0, -150);
+                case Vector2(0, 1):
+                    Texture = Game1.self.textures[orgTexture.Name[0] + "d"];
                     break;
                 default:
                     break;
             }
+        }
+
+        protected void QueueTurn(Vector2 from)
+        {
+            Random rng = new();
+            var left = from + new Vector2(-1, 0);
+            var right = from + new Vector2(1, 0);
+            var up = from + new Vector2(0, -1);
+            var down = from + new Vector2(0, 1);
+            List<Vector2> turns = new()
+            {
+                left,
+                right,
+                up,
+                down
+            };
+
+            List<Vector2> viable = new();
+            foreach (var item in turns)
+            {
+                if (Game1.self.activeScene.grid.CanMoveInto(item) && item != prevTile && item.X > 0 && item.X < Configuration.cells.X - 1 && item.Y > 0 && item.Y < Configuration.cells.Y - 1)
+                {
+                    viable.Add(item);
+                }
+            }
+            (float, Vector2) min = (float.MaxValue, new());
+            foreach (var item in viable)
+            {
+                if (phase == Phase.Frightened)
+                {
+                    nextTile = viable[rng.Next(0, viable.Count)];
+                    return;
+                }
+                var len = (item - (phase == Phase.Chase ? Game1.self.activeScene.player.GridPosition : target)).Length();
+                if (len < min.Item1) min = (len, item);
+            }
+            if (nextTile == min.Item2 - from) return;
+            nextTile = min.Item2;
+        }
+        protected void ChangePhase(object source, ElapsedEventArgs e)
+        {
+            if (phase == Phase.Chase) 
+            { 
+                phase = Phase.Scatter;
+                timer = new(7000);
+            }
+            else if (phase == Phase.Scatter)
+            { 
+                phase = Phase.Chase;
+                timer = new(21000);
+            }
+            else if (phase == Phase.Frightened)
+            {
+                phase = Phase.Scatter;
+                Texture = orgTexture;
+                timer = new(7000);
+            }
+        }
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(Texture, Position - new Vector2(5, 5) + new Vector2(0, 50), Color.White);
+        }
+        public void Frighten()
+        {
+            if (state != Leaving.left || phase == Phase.Frightened) return;
+            phase = Phase.Frightened;
+            orgTexture = Texture;
+            Texture = Game1.self.textures["scared"];
+            timer = new(5000);
+        }
+        protected static Vector2 ConvertToVec(Direction turn)
+        {
+            return turn switch
+            {
+                Direction.Right => new Vector2(-1, 0),
+                Direction.Left => new Vector2(1, 0),
+                Direction.Down => new Vector2(0, -1),
+                Direction.Up => new Vector2(0, 1),
+                _ => new Vector2(0, 0),
+            };
         }
     }
 }

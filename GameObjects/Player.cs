@@ -16,15 +16,16 @@ namespace PacMan.GameObjects
         Direction? dir;
         Direction? queuedTurn;
         public Vector2 Velocity;
+        double changedTexture = 0;
         public Player()
         {
             Texture = Game1.self.textures["player"];
 
-            GridPosition = new(Configuration.cells / 2, Configuration.cells - 8);
-            Position = Configuration.cellSize * GridPosition;
+            GridPosition = new(13, 22);
+            Position = Configuration.cellSize * GridPosition + new Vector2(Configuration.cellSize / 2, 0);
 
-            Velocity = new(-150, 0);
-            dir = Direction.Left;
+            Velocity = new(Configuration.basePlayerVel, 0);
+            dir = Direction.Right;
 
             Game1.self.activeScene.grid.Add((int)GridPosition.X, (int)GridPosition.Y, Grid.FieldType.Player);
         }
@@ -33,12 +34,12 @@ namespace PacMan.GameObjects
         {
             float passed = (float)UpdateTime.ElapsedGameTime.TotalSeconds;
             var newPos = Position + Velocity * passed;
-            var newGrid = newPos / Configuration.cellSize;
+            var newGrid = new Vector2((int)(newPos / Configuration.cellSize).X, (int)(newPos / Configuration.cellSize).Y);
 
-            if (Game1.self.activeScene.grid.IsWall(newGrid))
+            if (Game1.self.activeScene.grid.CanMoveInto(newGrid))
             {
-                if ((dir == Direction.Right && !Game1.self.activeScene.grid.IsWall(newGrid + new Vector2(1, 0)))
-                    || (dir == Direction.Down && !Game1.self.activeScene.grid.IsWall(newGrid + new Vector2(0, 1))))
+                if ((dir == Direction.Right && !Game1.self.activeScene.grid.CanMoveInto(newGrid + new Vector2(1, 0)))
+                    || (dir == Direction.Down && !Game1.self.activeScene.grid.CanMoveInto(newGrid + new Vector2(0, 1))))
                 {
                     Velocity = Vector2.Zero;
                     Position = Configuration.cellSize * (GridPosition + (dir == Direction.Right ? new Vector2(1,0) : new Vector2(0,1)));
@@ -61,6 +62,17 @@ namespace PacMan.GameObjects
 
             TryTurn();
            
+            if(UpdateTime.TotalGameTime.TotalSeconds - changedTexture > 0.1)
+            {
+                if (Texture == Game1.self.textures["player"] && dir is not null)
+                {
+                    Texture = Game1.self.textures["open"+dir.ToString()];
+                }
+                else Texture = Game1.self.textures["player"];
+                changedTexture = UpdateTime.TotalGameTime.TotalSeconds;
+            }
+
+
         }
         public void Queue(Direction arg)
         {
@@ -75,37 +87,37 @@ namespace PacMan.GameObjects
             switch (queuedTurn)
             {
                 case Direction.Left:
-                    if (relativePos.Y < 5 && grid.IsWall(GridPosition + new Vector2(-1,0)))
+                    if (relativePos.Y < 5 && grid.CanMoveInto(GridPosition + new Vector2(-1,0)))
                     {
                         dir = Direction.Left;
-                        Velocity = new(-150, 0);
+                        Velocity = new(-Configuration.basePlayerVel, 0);
                         Position = new(Position.X, GridPosition.Y * cell);
                         queuedTurn = null;
                     }
                     break;
                 case Direction.Right:
-                    if (relativePos.Y < 5 && grid.IsWall(GridPosition + new Vector2(1, 0)))
+                    if (relativePos.Y < 5 && grid.CanMoveInto(GridPosition + new Vector2(1, 0)))
                     {
                         dir = Direction.Right;
-                        Velocity = new(150, 0);
+                        Velocity = new(Configuration.basePlayerVel, 0);
                         Position = new(Position.X, GridPosition.Y * cell);
                         queuedTurn = null;
                     }
                     break;
                 case Direction.Down:
-                    if (relativePos.X < 5 && grid.IsWall(GridPosition + new Vector2(0, 1)))
+                    if (relativePos.X < 5 && grid.CanMoveInto(GridPosition + new Vector2(0, 1)))
                     {
                         dir = Direction.Down;
-                        Velocity = new(0, 150);
+                        Velocity = new(0, Configuration.basePlayerVel);
                         Position = new(GridPosition.X * cell, Position.Y);
                         queuedTurn = null;
                     }
                     break;
                 case Direction.Up:
-                    if (relativePos.X < 5 && grid.IsWall(GridPosition + new Vector2(0, -1)))
+                    if (relativePos.X < 5 && grid.CanMoveInto(GridPosition + new Vector2(0, -1)))
                     {
                         dir = Direction.Up;
-                        Velocity = new(0, -150);
+                        Velocity = new(0, -Configuration.basePlayerVel);
                         Position = new(GridPosition.X * cell, Position.Y);
                         queuedTurn = null;
                     }
@@ -117,7 +129,7 @@ namespace PacMan.GameObjects
         }
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, Position, Color.White);
+            spriteBatch.Draw(Texture, Position - new Vector2(5, 5) + new Vector2(0, 50), Color.White);
         }
     }
 }

@@ -7,18 +7,15 @@ namespace PacMan.GameObjects
     internal class WallRect : GameObject
     {
         public Rectangle bounds;
-        public bool vertical;
-        public MyRectangle original;
-        public WallRect(Rectangle arg, MyRectangle source)
+        public WallRect(Rectangle arg)
         {
             bounds = arg;
-            vertical = bounds.Width == 1;
-            original = source;
             Texture = Game1.self.textures["wall"];
         }
         override public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, bounds, vertical ? Color.White : Color.Gray);
+            if(bounds.Width == Configuration.cellSize || bounds.Height == Configuration.cellSize) spriteBatch.Draw(Texture, new Rectangle(bounds.X + 7, bounds.Y + 7 + 50, bounds.Width - 14, bounds.Height - 14), Color.DarkRed);
+            else spriteBatch.Draw(Texture, new Rectangle(bounds.X + 10, bounds.Y + 10 + 50, bounds.Width - 20, bounds.Height - 20), Color.DarkRed);
         }
     }
 }

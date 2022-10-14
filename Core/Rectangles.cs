@@ -18,8 +18,8 @@ namespace PacMan.Core
 
             rectangles.ForEach(delegate (MyRectangle item) { 
 
-                converted.Add(new(item.ToRect(), item));
-
+                converted.Add(new(item.ToRect()));
+                converted.Add(new(item.ReverseRect()));
                 for (int i = 0; i < item.Width; i++)
                 {
                      for (int j = 0; j < item.Height; j++)
@@ -30,28 +30,11 @@ namespace PacMan.Core
             });
             foreach (var item in converted)
             {
-                if (item.vertical)
+                for (int i = 0; i < item.bounds.Width / Configuration.cellSize; i++)
                 {
-                    if (grid.IsWall(new(item.original.X, item.original.Y - 1)))
+                    for (int j = 0; j < item.bounds.Height / Configuration.cellSize; j++)
                     {
-                        item.bounds.Y -= 5;
-                        item.bounds.Height += 5;
-                    }
-                    if (grid.IsWall(new(item.original.X, item.original.Y + 1)))
-                    {
-                        item.bounds.Height += 5;
-                    }
-                }
-                else
-                {
-                    if (grid.IsWall(new(item.original.X - 1, item.original.Y)))
-                    {
-                        item.bounds.X -= 5;
-                        item.bounds.Width += 5;
-                    }
-                    if (grid.IsWall(new(item.original.X + 1, item.original.Y)))
-                    {
-                        item.bounds.Width += 5;
+                        grid.Add(i + item.bounds.X / Configuration.cellSize, j + item.bounds.Y / Configuration.cellSize, Grid.FieldType.Wall);
                     }
                 }
             }

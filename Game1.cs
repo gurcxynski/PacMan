@@ -76,18 +76,44 @@ namespace PacMan
             // Loading all needed files
 
             textures["back"] = Content.Load<Texture2D>("back");
-            textures["button"] = Content.Load<Texture2D>("placeholder");
+            textures["button"] = Content.Load<Texture2D>("newgame");
             textures["player"] = Content.Load<Texture2D>("player");
-            textures["enemy"] = Content.Load<Texture2D>("enemy");
             textures["pausebutton"] = Content.Load<Texture2D>("placeholder");
             textures["menubck"] = Content.Load<Texture2D>("menu");
-            textures["playbutton"] = Content.Load<Texture2D>("newgamebutton");
+            textures["playbutton"] = Content.Load<Texture2D>("newgame");
             textures["menubutton"] = Content.Load<Texture2D>("placeholder");
-            textures["resumebutton"] = Content.Load<Texture2D>("resumebutton");
-            textures["exitbutton"] = Content.Load<Texture2D>("quitbutton");
+            textures["resumebutton"] = Content.Load<Texture2D>("resume");
+            textures["exitbutton"] = Content.Load<Texture2D>("exit");
             textures["wall"] = Content.Load<Texture2D>("wall");
-            textures["point"] = Content.Load<Texture2D>("circle");
-            
+            textures["point"] = Content.Load<Texture2D>("point");
+            textures["openLeft"] = Content.Load<Texture2D>("openleft");
+            textures["openRight"] = Content.Load<Texture2D>("openright");
+            textures["openDown"] = Content.Load<Texture2D>("opendown");
+            textures["openUp"] = Content.Load<Texture2D>("openup");
+            textures["circle"] = Content.Load<Texture2D>("circle");
+            textures["scared"] = Content.Load<Texture2D>("scared");
+            textures["life"] = Content.Load<Texture2D>("live");
+
+
+            textures["ru"] = Content.Load<Texture2D>("ru");
+            textures["rd"] = Content.Load<Texture2D>("rd");
+            textures["rl"] = Content.Load<Texture2D>("rl");
+            textures["rr"] = Content.Load<Texture2D>("rr");
+
+            textures["pu"] = Content.Load<Texture2D>("pu");
+            textures["pd"] = Content.Load<Texture2D>("pd");
+            textures["pl"] = Content.Load<Texture2D>("pl");
+            textures["pr"] = Content.Load<Texture2D>("pr");
+
+            textures["yu"] = Content.Load<Texture2D>("yu");
+            textures["yd"] = Content.Load<Texture2D>("yd");
+            textures["yl"] = Content.Load<Texture2D>("yl");
+            textures["yr"] = Content.Load<Texture2D>("yr");
+
+            textures["bu"] = Content.Load<Texture2D>("bu");
+            textures["bd"] = Content.Load<Texture2D>("bd");
+            textures["bl"] = Content.Load<Texture2D>("bl");
+            textures["br"] = Content.Load<Texture2D>("br");
 
             font = Content.Load<SpriteFont>("font");
 
