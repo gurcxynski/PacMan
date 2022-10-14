@@ -4,7 +4,7 @@ using PacMan.GameObjects;
 namespace PacMan.Core
 {
     public class State
-    { 
+    {
         public enum GameState
         {
             Running,
@@ -20,7 +20,7 @@ namespace PacMan.Core
             if (state == GameState.GameWon && !Game1.self.activeScene.drawScreen)
             {
                 ToStartMenu();
-    }
+            }
             if (state == GameState.GameLost && !Game1.self.activeScene.drawScreen)
             {
                 ToStartMenu();
@@ -83,12 +83,12 @@ namespace PacMan.Core
             Game1.self.activeScene.inky.Frighten();
             Game1.self.activeScene.pinky.Frighten();
             Game1.self.activeScene.clyde.Frighten();
-            if(Game1.self.activeScene.jail.Count > 0) Game1.self.activeScene.jail[^1].Leave(updateTime);
+            if (Game1.self.activeScene.jail.Count > 0) Game1.self.activeScene.jail[^1].Leave(updateTime);
         }
 
         internal void EatenScared(Enemy food, GameTime updateTime)
         {
-            Game1.self.activeScene.jail.Add(food); 
+            Game1.self.activeScene.jail.Add(food);
             if (Game1.self.activeScene.jail.Count > 0) Game1.self.activeScene.jail[^1].Leave(updateTime);
             food.phase = Phase.Scatter;
             food.state = Leaving.stay;

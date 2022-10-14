@@ -14,21 +14,22 @@ namespace PacMan.Core
         public List<WallRect> Convert()
         {
             List<WallRect> converted = new();
-            var grid = Game1.self.activeScene.grid;
+            Grid grid = Game1.self.activeScene.grid;
 
-            rectangles.ForEach(delegate (MyRectangle item) { 
+            rectangles.ForEach(delegate (MyRectangle item)
+            {
 
                 converted.Add(new(item.ToRect()));
                 converted.Add(new(item.ReverseRect()));
                 for (int i = 0; i < item.Width; i++)
                 {
-                     for (int j = 0; j < item.Height; j++)
-                     {
+                    for (int j = 0; j < item.Height; j++)
+                    {
                         grid.Add(i + item.X, j + item.Y, Grid.FieldType.Wall);
-                     }
+                    }
                 }
             });
-            foreach (var item in converted)
+            foreach (WallRect item in converted)
             {
                 for (int i = 0; i < item.bounds.Width / Configuration.cellSize; i++)
                 {

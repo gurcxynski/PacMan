@@ -33,8 +33,8 @@ namespace PacMan.GameObjects
         public override void Update(GameTime UpdateTime)
         {
             float passed = (float)UpdateTime.ElapsedGameTime.TotalSeconds;
-            var newPos = Position + Velocity * passed;
-            var newGrid = new Vector2((int)(newPos / Configuration.cellSize).X, (int)(newPos / Configuration.cellSize).Y);
+            Vector2 newPos = Position + Velocity * passed;
+            Vector2 newGrid = new Vector2((int)(newPos / Configuration.cellSize).X, (int)(newPos / Configuration.cellSize).Y);
 
             if (Game1.self.activeScene.grid.CanMoveInto(newGrid))
             {
@@ -42,7 +42,7 @@ namespace PacMan.GameObjects
                     || (dir == Direction.Down && !Game1.self.activeScene.grid.CanMoveInto(newGrid + new Vector2(0, 1))))
                 {
                     Velocity = Vector2.Zero;
-                    Position = Configuration.cellSize * (GridPosition + (dir == Direction.Right ? new Vector2(1,0) : new Vector2(0,1)));
+                    Position = Configuration.cellSize * (GridPosition + (dir == Direction.Right ? new Vector2(1, 0) : new Vector2(0, 1)));
                     dir = null;
                 }
                 else Position = newPos;
@@ -61,12 +61,12 @@ namespace PacMan.GameObjects
             GridPosition = new((int)(Position.X / Configuration.cellSize), (int)(Position.Y / Configuration.cellSize));
 
             TryTurn();
-           
-            if(UpdateTime.TotalGameTime.TotalSeconds - changedTexture > 0.1)
+
+            if (UpdateTime.TotalGameTime.TotalSeconds - changedTexture > 0.1)
             {
                 if (Texture == Game1.self.textures["player"] && dir is not null)
                 {
-                    Texture = Game1.self.textures["open"+dir.ToString()];
+                    Texture = Game1.self.textures["open" + dir.ToString()];
                 }
                 else Texture = Game1.self.textures["player"];
                 changedTexture = UpdateTime.TotalGameTime.TotalSeconds;
@@ -81,13 +81,13 @@ namespace PacMan.GameObjects
         }
         bool TryTurn()
         {
-            var cell = Configuration.cellSize;
-            var grid = Game1.self.activeScene.grid;
+            int cell = Configuration.cellSize;
+            Grid grid = Game1.self.activeScene.grid;
             Vector2 relativePos = new(Position.X % cell, Position.Y % cell);
             switch (queuedTurn)
             {
                 case Direction.Left:
-                    if (relativePos.Y < 5 && grid.CanMoveInto(GridPosition + new Vector2(-1,0)))
+                    if (relativePos.Y < 5 && grid.CanMoveInto(GridPosition + new Vector2(-1, 0)))
                     {
                         dir = Direction.Left;
                         Velocity = new(-Configuration.basePlayerVel, 0);

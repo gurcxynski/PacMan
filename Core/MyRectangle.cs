@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using SharpDX.Direct3D9;
 using System.Text.Json.Serialization;
 
 namespace PacMan.Core
@@ -19,7 +18,7 @@ namespace PacMan.Core
         public Rectangle ReverseRect()
         {
             return new(
-                (int)Configuration.windowSize.X - cell * X - cell * Width, 
+                (int)Configuration.windowSize.X - cell * X - cell * Width,
                 cell * Y,
                 cell * Width,
                 cell * Height);

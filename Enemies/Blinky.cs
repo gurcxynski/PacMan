@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using PacMan.Core;
 using PacMan.GameObjects;
-using System.Diagnostics;
 
 namespace PacMan.Enemies
 {

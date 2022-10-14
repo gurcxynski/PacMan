@@ -9,7 +9,7 @@ namespace PacMan
 {
     public class Game1 : Game
     {
-        private GraphicsDeviceManager _graphics;
+        private readonly GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
         public static Game1 self;
@@ -19,20 +19,14 @@ namespace PacMan
         public static EasyKeyboard keyboard;
         public static EasyMouse mouse;
 
-        // Game State
-
         public State state;
 
-        // Game Scene
 
         public Scene activeScene;
-
-        // All menus
 
         public StartScreen starting;
         public PauseMenu menu;
 
-        // Texture list
 
         public Dictionary<string, Texture2D> textures = new();
         public SpriteFont font;

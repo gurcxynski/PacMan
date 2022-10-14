@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Diagnostics;
 using Point = PacMan.GameObjects.Point;
 
 namespace PacMan.Core
@@ -15,26 +14,27 @@ namespace PacMan.Core
             Circle,
             Empty
         }
-        FieldType[,] grid = new FieldType[(int)Configuration.cells.X, (int)Configuration.cells.Y];
+
+        readonly FieldType[,] grid = new FieldType[(int)Configuration.cells.X, (int)Configuration.cells.Y];
         public Grid()
         {
             for (int i = 0; i < Configuration.cells.X; i++)
             {
                 for (int j = 0; j < Configuration.cells.Y; j++)
                 {
-                    grid[i,j] = FieldType.Empty;
+                    grid[i, j] = FieldType.Empty;
                 }
             }
         }
         public bool Add(int x, int y, FieldType type)
         {
-            if (grid[x,y] == FieldType.Empty) grid[x,y] = type;
+            if (grid[x, y] == FieldType.Empty) grid[x, y] = type;
             else return false;
             return true;
         }
         public void Clear(int x, int y)
         {
-            grid[x,y] = FieldType.Empty;
+            grid[x, y] = FieldType.Empty;
         }
         public override string ToString()
         {
@@ -43,7 +43,7 @@ namespace PacMan.Core
             {
                 for (int j = 0; j < Configuration.cells.Y; j++)
                 {
-                    text += $" {grid[j,i]}";
+                    text += $" {grid[j, i]}";
                 }
                 text += "\n";
             }

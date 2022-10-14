@@ -1,5 +1,4 @@
-﻿using PacMan;
-using PacMan.Core;
+﻿using PacMan.Core;
 
 namespace PacMan.Buttons
 {

@@ -79,10 +79,10 @@ namespace PacMan.GameObjects
         }
         protected bool MoveTo(Vector2 to, GameTime updateTime)
         {
-            var progress = updateTime.TotalGameTime.TotalSeconds - lastTurn;
-            var relative = to - GridPosition;
-            
-            if(progress * Configuration.baseEnemyVel > Configuration.cellSize)
+            double? progress = updateTime.TotalGameTime.TotalSeconds - lastTurn;
+            Vector2 relative = to - GridPosition;
+
+            if (progress * Configuration.baseEnemyVel > Configuration.cellSize)
             {
                 prevTile = GridPosition;
                 GridPosition = to;
@@ -103,7 +103,7 @@ namespace PacMan.GameObjects
         protected void ChangeTexture()
         {
             if (phase == Phase.Frightened) return;
-            var relative = nextTile - GridPosition;
+            Vector2 relative = nextTile - GridPosition;
             switch (relative)
             {
                 case Vector2(1, 0):
@@ -126,10 +126,10 @@ namespace PacMan.GameObjects
         protected void QueueTurn(Vector2 from)
         {
             Random rng = new();
-            var left = from + new Vector2(-1, 0);
-            var right = from + new Vector2(1, 0);
-            var up = from + new Vector2(0, -1);
-            var down = from + new Vector2(0, 1);
+            Vector2 left = from + new Vector2(-1, 0);
+            Vector2 right = from + new Vector2(1, 0);
+            Vector2 up = from + new Vector2(0, -1);
+            Vector2 down = from + new Vector2(0, 1);
             List<Vector2> turns = new()
             {
                 left,
@@ -139,7 +139,7 @@ namespace PacMan.GameObjects
             };
 
             List<Vector2> viable = new();
-            foreach (var item in turns)
+            foreach (Vector2 item in turns)
             {
                 if (Game1.self.activeScene.grid.CanMoveInto(item) && item != prevTile && item.X > 0 && item.X < Configuration.cells.X - 1 && item.Y > 0 && item.Y < Configuration.cells.Y - 1)
                 {
@@ -147,14 +147,14 @@ namespace PacMan.GameObjects
                 }
             }
             (float, Vector2) min = (float.MaxValue, new());
-            foreach (var item in viable)
+            foreach (Vector2 item in viable)
             {
                 if (phase == Phase.Frightened)
                 {
                     nextTile = viable[rng.Next(0, viable.Count)];
                     return;
                 }
-                var len = (item - (phase == Phase.Chase ? Game1.self.activeScene.player.GridPosition : target)).Length();
+                float len = (item - (phase == Phase.Chase ? Game1.self.activeScene.player.GridPosition : target)).Length();
                 if (len < min.Item1) min = (len, item);
             }
             if (nextTile == min.Item2 - from) return;
@@ -162,13 +162,13 @@ namespace PacMan.GameObjects
         }
         protected void ChangePhase(object source, ElapsedEventArgs e)
         {
-            if (phase == Phase.Chase) 
-            { 
+            if (phase == Phase.Chase)
+            {
                 phase = Phase.Scatter;
                 timer = new(7000);
             }
             else if (phase == Phase.Scatter)
-            { 
+            {
                 phase = Phase.Chase;
                 timer = new(21000);
             }

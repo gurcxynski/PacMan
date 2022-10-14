@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Input;
 using PacMan.Buttons;
 using PacMan.Enemies;
 using PacMan.GameObjects;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -51,7 +50,7 @@ namespace PacMan.Core
             player = new();
 
 
-            var jsonString = File.ReadAllText("rectangles.json");
+            string jsonString = File.ReadAllText("rectangles.json");
             rectangles = JsonSerializer.Deserialize<Rectangles>(jsonString);
 
             objects.AddRange(rectangles.Convert());
@@ -92,9 +91,9 @@ namespace PacMan.Core
 
             List<GameObject> toAdd = new();
             List<GameObject> toRemove = new();
-            if (drawScreen) return; 
+            if (drawScreen) return;
 
-            if(player is null)
+            if (player is null)
             {
                 player = new();
                 objects.Add(player);
@@ -103,7 +102,7 @@ namespace PacMan.Core
             objects.ForEach(delegate (GameObject item) { item.Update(UpdateTime); });
             objects.AddRange(toAdd);
 
-            foreach (var item in objects)
+            foreach (GameObject item in objects)
             {
                 if (item.GetType() == typeof(Point) && player is not null && item.GridPosition == player.GridPosition)
                 {
@@ -163,7 +162,6 @@ namespace PacMan.Core
                     break;
             }
         }
-        // drawing everything
 
         public void Draw(SpriteBatch spriteBatch)
         {
@@ -173,14 +171,14 @@ namespace PacMan.Core
 
             spriteBatch.DrawString(Game1.self.font, $"SCORE: {score}\nHIGH SCORE: {Game1.self.high}", new(0, 0), Color.White);
 
-            for (int i = 0; i < Game1.self.state.lives; i++) {
-                spriteBatch.Draw(Game1.self.textures["life"], new Vector2(Configuration.windowSize.X - 100 + i * 20, 10), Color.White); 
+            for (int i = 0; i < Game1.self.state.lives; i++)
+            {
+                spriteBatch.Draw(Game1.self.textures["life"], new Vector2(Configuration.windowSize.X - 100 + i * 20, 10), Color.White);
             }
 
-            if (drawScreen) spriteBatch.DrawString(Game1.self.font, TextToDraw, (Configuration.windowSize - Game1.self.font.MeasureString(TextToDraw)) / 2 + new Vector2(0, 70), Color.White); 
+            if (drawScreen) spriteBatch.DrawString(Game1.self.font, TextToDraw, (Configuration.windowSize - Game1.self.font.MeasureString(TextToDraw)) / 2 + new Vector2(0, 70), Color.White);
         }
 
-        // show texture for given amount of milliseconds
 
         public void TextPopUp(int time, string text)
         {
